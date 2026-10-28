@@ -1,0 +1,720 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>Soulful Holiday Sides & Sweets — Order Form</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:'Segoe UI',Arial,sans-serif;background:#F7F4EE;color:#222;}
+/* Header */
+.hdr{background:#2D5016;padding:22px 24px 14px;text-align:center;}
+.hdr h1{font-family:Georgia,serif;font-size:1.8rem;font-weight:700;color:#fff;letter-spacing:.04em;margin-bottom:3px;}
+.hdr .tag{font-size:.78rem;color:#8DB87A;letter-spacing:.16em;text-transform:uppercase;margin-bottom:6px;}
+.hdr .yr{font-size:.95rem;color:#C8960C;font-weight:700;margin-bottom:8px;}
+.hdr .cb{display:inline-flex;gap:18px;background:rgba(255,255,255,.08);border:1px solid #C8960C;border-radius:6px;padding:5px 14px;font-size:.78rem;color:#8DB87A;}
+.hdr .cb strong{color:#C8960C;}
+/* Notices */
+.incl{background:#4A7C24;color:#fff;text-align:center;padding:8px 16px;font-size:.8rem;}
+/* Date gate */
+.gate-wrap{background:#fff;border-radius:14px;box-shadow:0 2px 12px rgba(0,0,0,.10);padding:28px 24px;margin:20px auto 0;max-width:560px;text-align:center;}
+/* Menu body */
+.wrap{max-width:700px;margin:0 auto;padding:0 12px 40px;}
+/* Section headers */
+.sec-hdr{background:#2D5016;color:#fff;border-radius:10px 10px 0 0;padding:13px 16px;display:flex;justify-content:space-between;align-items:center;margin-top:18px;cursor:pointer;user-select:none;}
+.sec-hdr h2{font-size:1rem;letter-spacing:.04em;}
+.sec-hdr .badge{background:#C8960C;color:#fff;border-radius:20px;padding:3px 12px;font-size:.78rem;font-weight:700;white-space:nowrap;}
+.sec-sub{background:#4A7C24;color:#fff;font-size:.75rem;padding:4px 16px 6px;letter-spacing:.03em;}
+.sec-body{background:#fff;border-radius:0 0 10px 10px;overflow:hidden;}
+/* Item rows */
+.item-row{display:flex;align-items:flex-start;gap:12px;padding:13px 14px;border-bottom:1px solid #F0EDE6;transition:background .15s;}
+.item-row:last-child{border-bottom:none;}
+.item-row.unavail{opacity:.4;pointer-events:none;}
+.item-cb{width:20px;height:20px;border:2px solid #4A7C24;border-radius:5px;cursor:pointer;flex-shrink:0;margin-top:3px;appearance:none;-webkit-appearance:none;background:#fff;}
+.item-cb:checked{background:#4A7C24;border-color:#2D5016;}
+.item-cb:checked::after{content:'✓';color:#fff;font-size:13px;display:flex;align-items:center;justify-content:center;height:100%;}
+.item-info{flex:1;}
+.item-name{font-weight:600;font-size:.9rem;color:#2D5016;}
+.item-desc{font-size:.78rem;color:#666;margin-top:2px;line-height:1.4;}
+.item-veg{color:#2D5016;font-size:.75rem;font-weight:700;margin-top:3px;}
+.item-price{color:#C8960C;font-weight:700;font-size:.9rem;white-space:nowrap;margin-top:3px;}
+.item-qty{display:flex;align-items:center;gap:6px;margin-top:6px;}
+.item-qty button{width:26px;height:26px;border:1.5px solid #2D5016;border-radius:6px;background:#fff;color:#2D5016;font-size:1rem;font-weight:700;cursor:pointer;line-height:1;}
+.item-qty button:hover{background:#2D5016;color:#fff;}
+.item-qty span{min-width:20px;text-align:center;font-weight:600;font-size:.9rem;}
+/* Pickup/Delivery toggle */
+.toggle-wrap{background:#fff;border-radius:10px;padding:16px;margin-top:18px;box-shadow:0 1px 6px rgba(0,0,0,.07);}
+.toggle-wrap .sec-title{font-size:.85rem;font-weight:700;color:#2D5016;text-transform:uppercase;letter-spacing:.05em;margin-bottom:10px;}
+.radio-row{display:flex;gap:10px;flex-wrap:wrap;}
+.radio-row label{display:flex;align-items:center;gap:7px;padding:9px 14px;border:2px solid #ccc;border-radius:8px;cursor:pointer;font-size:.85rem;flex:1;min-width:140px;}
+.radio-row input[type=radio]{accent-color:#2D5016;width:16px;height:16px;}
+.radio-row input[type=radio]:checked + span{font-weight:700;color:#2D5016;}
+.radio-row label:has(input:checked){border-color:#2D5016;background:#F5FDF5;}
+/* Delivery section */
+#delivery-section{display:none;}
+/* Customer info */
+.cust{background:#fff;border-radius:10px;padding:18px 16px;margin-top:18px;box-shadow:0 1px 6px rgba(0,0,0,.07);}
+.sec-title{font-size:.85rem;font-weight:700;color:#2D5016;text-transform:uppercase;letter-spacing:.05em;margin-bottom:12px;}
+.frow{display:flex;gap:12px;flex-wrap:wrap;margin-bottom:10px;}
+.fg{flex:1;min-width:140px;display:flex;flex-direction:column;gap:4px;}
+.fg label{font-size:.78rem;font-weight:600;color:#444;}
+.fg input,.fg select,.fg textarea{padding:9px 11px;border:1.5px solid #ccc;border-radius:7px;font-size:.88rem;font-family:inherit;color:#333;width:100%;}
+.fg input:focus,.fg select:focus,.fg textarea:focus{outline:none;border-color:#4A7C24;}
+.fg textarea{resize:vertical;min-height:70px;}
+/* Summary */
+.summ{background:#fff;border-radius:10px;padding:16px;margin-top:18px;box-shadow:0 1px 6px rgba(0,0,0,.07);}
+.summ-row{display:flex;justify-content:space-between;font-size:.85rem;color:#555;padding:4px 0;}
+.summ-total{display:flex;justify-content:space-between;font-size:1.05rem;font-weight:700;color:#2D5016;border-top:2px solid #E8F5E9;padding-top:8px;margin-top:6px;}
+.summ-note{font-size:.72rem;color:#999;text-align:right;margin-top:4px;}
+/* Buttons */
+.sub-btn{display:block;width:100%;padding:14px;background:#2D5016;color:#fff;border:none;border-radius:8px;font-size:1rem;font-weight:700;cursor:pointer;margin-top:14px;font-family:inherit;letter-spacing:.02em;}
+.sub-btn:hover{background:#4A7C24;}
+.clr-btn{display:block;width:100%;padding:11px;background:#fff;color:#666;border:1.5px solid #ccc;border-radius:8px;font-size:.88rem;cursor:pointer;margin-top:8px;font-family:inherit;}
+.clr-btn:hover{border-color:#999;color:#333;}
+/* Order summary panel */
+.order-summary-panel{background:#F7F4EE;border-radius:8px;padding:12px 14px;margin:10px 0;text-align:left;font-size:.82rem;line-height:1.7;max-height:260px;overflow-y:auto;}
+/* Modal */
+.modal-ov{display:none;position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,.5);z-index:1000;align-items:flex-end;justify-content:center;}
+.modal-ov.open{display:flex;}
+.modal{background:#fff;border-radius:16px 16px 0 0;padding:24px 20px 32px;width:100%;max-width:500px;max-height:90vh;overflow-y:auto;}
+.modal-ic{font-size:2rem;text-align:center;margin-bottom:8px;}
+.modal h2{text-align:center;color:#2D5016;font-size:1.1rem;margin-bottom:8px;}
+/* Deadline popup */
+#deadline-modal{display:none;position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.6);z-index:9999;flex-direction:column;align-items:center;justify-content:center;}
+@media(max-width:480px){.frow{flex-direction:column;}.radio-row{flex-direction:column;}}
+</style>
+</head>
+<body>
+
+<header class="hdr">
+  <h1>Doughboy Food</h1>
+  <div class="tag">Soulful Holiday Sides &amp; Sweets</div>
+  <div class="yr">HOLIDAY 2026 — ORDER FORM</div>
+  <div class="cb">
+    <strong>Phone:</strong> 443-272-5484 &nbsp;|&nbsp; <strong>Email:</strong> doughboydinners@gmail.com
+  </div>
+</header>
+<div class="incl">Pickup times will be emailed after your order is confirmed &bull; Delivery available within 10 miles of 21208</div>
+
+<!-- Date Gate -->
+<div class="gate-wrap" id="date-gate">
+  <div style="font-size:1.6rem;margin-bottom:8px;">📅</div>
+  <h2 style="font-family:inherit;color:#2D5016;font-size:1.1rem;margin-bottom:6px;">When do you need your order?</h2>
+  <p style="font-size:.85rem;color:#666;margin-bottom:16px;">Select your pickup or delivery date to get started.<br>Orders must be placed at least 7 days in advance.</p>
+  <input type="date" id="cd" onchange="checkEventDate()" style="width:100%;max-width:260px;padding:11px 14px;border:2px solid #2D5016;border-radius:8px;font-size:1rem;font-family:inherit;color:#333;text-align:center;box-sizing:border-box;"/>
+  <div id="date-gate-msg" style="display:none;color:#C0392B;font-size:.83rem;margin-top:8px;"></div>
+</div>
+
+<!-- Menu (hidden until valid date) -->
+<div id="menu-body" style="display:none;">
+<div class="wrap">
+
+  <!-- Pickup / Delivery -->
+  <div class="toggle-wrap">
+    <div class="sec-title">Pickup or Delivery?</div>
+    <div class="radio-row">
+      <label><input type="radio" name="fulfillment" value="pickup" checked onchange="toggleDelivery(this.value)"/><span>🏠 I will pick up my order</span></label>
+      <label><input type="radio" name="fulfillment" value="delivery" onchange="toggleDelivery(this.value)"/><span>🚗 Yes, I want delivery</span></label>
+    </div>
+  </div>
+
+  <!-- SOUL FOOD SIDES — HALF PAN -->
+  <div class="sec-hdr" onclick="toggleSection('sid-half')">
+    <h2>SOUL FOOD SIDES &mdash; Half Pan <span style="font-size:.75rem;opacity:.8;">(10&ndash;15 people)</span></h2>
+    <span class="badge" id="badge-sid-half">0 selected</span>
+  </div>
+  <div class="sec-body" id="sec-sid-half">
+    <div class="item-row" id="row-cg-veg">
+      <input type="checkbox" class="item-cb" id="cb-cg-veg" onchange="toggleItem('cg-veg')"/>
+      <div class="item-info">
+        <div class="item-name">Collard Greens <span style="color:#888;font-weight:400;font-size:.8rem;">— Vegetarian</span></div>
+        <div class="item-desc">Slow-cooked collard greens, no meat.</div>
+        <div class="item-veg">★ Vegetarian</div>
+      </div>
+      <div style="text-align:right;">
+        <div class="item-price">$50</div>
+        <div class="item-qty"><button onclick="changeQty('cg-veg',-1)">−</button><span id="qty-cg-veg">1</span><button onclick="changeQty('cg-veg',1)">+</button></div>
+      </div>
+    </div>
+    <div class="item-row" id="row-cg-smk">
+      <input type="checkbox" class="item-cb" id="cb-cg-smk" onchange="toggleItem('cg-smk')"/>
+      <div class="item-info">
+        <div class="item-name">Collard Greens <span style="color:#888;font-weight:400;font-size:.8rem;">— Smoked Turkey</span></div>
+        <div class="item-desc">Slow-cooked collard greens with smoked turkey.</div>
+      </div>
+      <div style="text-align:right;">
+        <div class="item-price">$65</div>
+        <div class="item-qty"><button onclick="changeQty('cg-smk',-1)">−</button><span id="qty-cg-smk">1</span><button onclick="changeQty('cg-smk',1)">+</button></div>
+      </div>
+    </div>
+    <div class="item-row" id="row-cy-half">
+      <input type="checkbox" class="item-cb" id="cb-cy-half" onchange="toggleItem('cy-half')"/>
+      <div class="item-info">
+        <div class="item-name">Candied Yams</div>
+        <div class="item-desc">Sweet, buttery candied yams.</div>
+      </div>
+      <div style="text-align:right;">
+        <div class="item-price">$45</div>
+        <div class="item-qty"><button onclick="changeQty('cy-half',-1)">−</button><span id="qty-cy-half">1</span><button onclick="changeQty('cy-half',1)">+</button></div>
+      </div>
+    </div>
+    <div class="item-row" id="row-gb-smk">
+      <input type="checkbox" class="item-cb" id="cb-gb-smk" onchange="toggleItem('gb-smk')"/>
+      <div class="item-info">
+        <div class="item-name">Green Beans <span style="color:#888;font-weight:400;font-size:.8rem;">— Smoked Turkey</span></div>
+        <div class="item-desc">Seasoned green beans with smoked turkey.</div>
+      </div>
+      <div style="text-align:right;">
+        <div class="item-price">$65</div>
+        <div class="item-qty"><button onclick="changeQty('gb-smk',-1)">−</button><span id="qty-gb-smk">1</span><button onclick="changeQty('gb-smk',1)">+</button></div>
+      </div>
+    </div>
+    <div class="item-row" id="row-gb-veg">
+      <input type="checkbox" class="item-cb" id="cb-gb-veg" onchange="toggleItem('gb-veg')"/>
+      <div class="item-info">
+        <div class="item-name">Green Beans <span style="color:#888;font-weight:400;font-size:.8rem;">— Vegetarian</span></div>
+        <div class="item-desc">Seasoned green beans, no meat.</div>
+        <div class="item-veg">★ Vegetarian</div>
+      </div>
+      <div style="text-align:right;">
+        <div class="item-price">$65</div>
+        <div class="item-qty"><button onclick="changeQty('gb-veg',-1)">−</button><span id="qty-gb-veg">1</span><button onclick="changeQty('gb-veg',1)">+</button></div>
+      </div>
+    </div>
+    <div class="item-row" id="row-mac-half">
+      <input type="checkbox" class="item-cb" id="cb-mac-half" onchange="toggleItem('mac-half')"/>
+      <div class="item-info">
+        <div class="item-name">Baked Mac &amp; Cheese</div>
+        <div class="item-desc">Creamy baked mac &amp; cheese.</div>
+      </div>
+      <div style="text-align:right;">
+        <div class="item-price">$70</div>
+        <div class="item-qty"><button onclick="changeQty('mac-half',-1)">−</button><span id="qty-mac-half">1</span><button onclick="changeQty('mac-half',1)">+</button></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- SOUL FOOD SIDES — FULL PAN -->
+  <div class="sec-hdr" onclick="toggleSection('sid-full')">
+    <h2>SOUL FOOD SIDES &mdash; Full Pan <span style="font-size:.75rem;opacity:.8;">(20&ndash;30 people)</span></h2>
+    <span class="badge" id="badge-sid-full">0 selected</span>
+  </div>
+  <div class="sec-body" id="sec-sid-full">
+    <div class="item-row" id="row-cg-smk-f">
+      <input type="checkbox" class="item-cb" id="cb-cg-smk-f" onchange="toggleItem('cg-smk-f')"/>
+      <div class="item-info">
+        <div class="item-name">Collard Greens <span style="color:#888;font-weight:400;font-size:.8rem;">— Smoked Turkey</span></div>
+        <div class="item-desc">Slow-cooked collard greens with smoked turkey.</div>
+      </div>
+      <div style="text-align:right;">
+        <div class="item-price">$85</div>
+        <div class="item-qty"><button onclick="changeQty('cg-smk-f',-1)">−</button><span id="qty-cg-smk-f">1</span><button onclick="changeQty('cg-smk-f',1)">+</button></div>
+      </div>
+    </div>
+    <div class="item-row" id="row-cg-veg-f">
+      <input type="checkbox" class="item-cb" id="cb-cg-veg-f" onchange="toggleItem('cg-veg-f')"/>
+      <div class="item-info">
+        <div class="item-name">Collard Greens <span style="color:#888;font-weight:400;font-size:.8rem;">— Vegetarian</span></div>
+        <div class="item-desc">Slow-cooked collard greens, no meat.</div>
+        <div class="item-veg">★ Vegetarian</div>
+      </div>
+      <div style="text-align:right;">
+        <div class="item-price">$85</div>
+        <div class="item-qty"><button onclick="changeQty('cg-veg-f',-1)">−</button><span id="qty-cg-veg-f">1</span><button onclick="changeQty('cg-veg-f',1)">+</button></div>
+      </div>
+    </div>
+    <div class="item-row" id="row-cy-full">
+      <input type="checkbox" class="item-cb" id="cb-cy-full" onchange="toggleItem('cy-full')"/>
+      <div class="item-info">
+        <div class="item-name">Candied Yams</div>
+        <div class="item-desc">Sweet, buttery candied yams.</div>
+      </div>
+      <div style="text-align:right;">
+        <div class="item-price">$65</div>
+        <div class="item-qty"><button onclick="changeQty('cy-full',-1)">−</button><span id="qty-cy-full">1</span><button onclick="changeQty('cy-full',1)">+</button></div>
+      </div>
+    </div>
+    <div class="item-row" id="row-gb-smk-f">
+      <input type="checkbox" class="item-cb" id="cb-gb-smk-f" onchange="toggleItem('gb-smk-f')"/>
+      <div class="item-info">
+        <div class="item-name">Green Beans <span style="color:#888;font-weight:400;font-size:.8rem;">— Smoked Turkey</span></div>
+        <div class="item-desc">Seasoned green beans with smoked turkey.</div>
+      </div>
+      <div style="text-align:right;">
+        <div class="item-price">$70</div>
+        <div class="item-qty"><button onclick="changeQty('gb-smk-f',-1)">−</button><span id="qty-gb-smk-f">1</span><button onclick="changeQty('gb-smk-f',1)">+</button></div>
+      </div>
+    </div>
+    <div class="item-row" id="row-gb-veg-f">
+      <input type="checkbox" class="item-cb" id="cb-gb-veg-f" onchange="toggleItem('gb-veg-f')"/>
+      <div class="item-info">
+        <div class="item-name">Green Beans <span style="color:#888;font-weight:400;font-size:.8rem;">— Vegetarian</span></div>
+        <div class="item-desc">Seasoned green beans, no meat.</div>
+        <div class="item-veg">★ Vegetarian</div>
+      </div>
+      <div style="text-align:right;">
+        <div class="item-price">$70</div>
+        <div class="item-qty"><button onclick="changeQty('gb-veg-f',-1)">−</button><span id="qty-gb-veg-f">1</span><button onclick="changeQty('gb-veg-f',1)">+</button></div>
+      </div>
+    </div>
+    <div class="item-row" id="row-mac-full">
+      <input type="checkbox" class="item-cb" id="cb-mac-full" onchange="toggleItem('mac-full')"/>
+      <div class="item-info">
+        <div class="item-name">Baked Mac &amp; Cheese</div>
+        <div class="item-desc">Creamy baked mac &amp; cheese.</div>
+      </div>
+      <div style="text-align:right;">
+        <div class="item-price">$95</div>
+        <div class="item-qty"><button onclick="changeQty('mac-full',-1)">−</button><span id="qty-mac-full">1</span><button onclick="changeQty('mac-full',1)">+</button></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- DESSERTS -->
+  <div class="sec-hdr" onclick="toggleSection('des')">
+    <h2>DESSERTS</h2>
+    <span class="badge" id="badge-des">0 selected</span>
+  </div>
+  <div class="sec-body" id="sec-des">
+    <div class="item-row" id="row-spp">
+      <input type="checkbox" class="item-cb" id="cb-spp" onchange="toggleItem('spp')"/>
+      <div class="item-info">
+        <div class="item-name">Sweet Potato Pie</div>
+        <div class="item-desc">Classic homemade sweet potato pie.</div>
+      </div>
+      <div style="text-align:right;">
+        <div class="item-price">$25</div>
+        <div class="item-qty"><button onclick="changeQty('spp',-1)">−</button><span id="qty-spp">1</span><button onclick="changeQty('spp',1)">+</button></div>
+      </div>
+    </div>
+    <div class="item-row" id="row-bb">
+      <input type="checkbox" class="item-cb" id="cb-bb" onchange="toggleItem('bb')"/>
+      <div class="item-info">
+        <div class="item-name">Banana Bread</div>
+        <div class="item-desc">Moist homemade banana bread.</div>
+      </div>
+      <div style="text-align:right;">
+        <div class="item-price">$20</div>
+        <div class="item-qty"><button onclick="changeQty('bb',-1)">−</button><span id="qty-bb">1</span><button onclick="changeQty('bb',1)">+</button></div>
+      </div>
+    </div>
+    <div class="item-row" id="row-spc">
+      <input type="checkbox" class="item-cb" id="cb-spc" onchange="toggleItem('spc')"/>
+      <div class="item-info">
+        <div class="item-name">Sweet Potato Cake</div>
+        <div class="item-desc">Spiced sweet potato cake.</div>
+      </div>
+      <div style="text-align:right;">
+        <div class="item-price">$35</div>
+        <div class="item-qty"><button onclick="changeQty('spc',-1)">−</button><span id="qty-spc">1</span><button onclick="changeQty('spc',1)">+</button></div>
+      </div>
+    </div>
+    <div class="item-row" id="row-pc">
+      <input type="checkbox" class="item-cb" id="cb-pc" onchange="toggleItem('pc')"/>
+      <div class="item-info">
+        <div class="item-name">Pound Cake</div>
+        <div class="item-desc">Classic golden butter pound cake.</div>
+      </div>
+      <div style="text-align:right;">
+        <div class="item-price">$35</div>
+        <div class="item-qty"><button onclick="changeQty('pc',-1)">−</button><span id="qty-pc">1</span><button onclick="changeQty('pc',1)">+</button></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- DRINKS -->
+  <div class="sec-hdr" onclick="toggleSection('drk')">
+    <h2>DRINKS</h2>
+    <span class="badge" id="badge-drk">0 selected</span>
+  </div>
+  <div class="sec-body" id="sec-drk">
+    <div class="item-row" id="row-rum">
+      <input type="checkbox" class="item-cb" id="cb-rum" onchange="toggleItem('rum')"/>
+      <div class="item-info">
+        <div class="item-name">Trini Rum Punch <span style="color:#888;font-weight:400;font-size:.8rem;">— 1 Gallon</span></div>
+        <div class="item-desc">Authentic Trinidad-style rum punch.</div>
+      </div>
+      <div style="text-align:right;">
+        <div class="item-price">$50</div>
+        <div class="item-qty"><button onclick="changeQty('rum',-1)">−</button><span id="qty-rum">1</span><button onclick="changeQty('rum',1)">+</button></div>
+      </div>
+    </div>
+    <div class="item-row" id="row-tea">
+      <input type="checkbox" class="item-cb" id="cb-tea" onchange="toggleItem('tea')"/>
+      <div class="item-info">
+        <div class="item-name">Homemade Peach Tea <span style="color:#888;font-weight:400;font-size:.8rem;">— 1 Gallon</span></div>
+        <div class="item-desc">Fresh homemade peach-infused tea.</div>
+      </div>
+      <div style="text-align:right;">
+        <div class="item-price">$12</div>
+        <div class="item-qty"><button onclick="changeQty('tea',-1)">−</button><span id="qty-tea">1</span><button onclick="changeQty('tea',1)">+</button></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- DELIVERY (shown only when delivery selected) -->
+  <div id="delivery-section">
+    <div class="sec-hdr" onclick="toggleSection('del')">
+      <h2>DELIVERY FEE</h2>
+      <span class="badge" id="badge-del">0 selected</span>
+    </div>
+    <div class="sec-sub">Select the delivery range that applies to your address</div>
+    <div class="sec-body" id="sec-del">
+      <div class="item-row" id="row-del2">
+        <input type="checkbox" class="item-cb" id="cb-del2" onchange="toggleItem('del2')"/>
+        <div class="item-info">
+          <div class="item-name">Up to 2 miles outside 21208</div>
+          <div class="item-desc">Covers up to 5 items.</div>
+        </div>
+        <div style="text-align:right;">
+          <div class="item-price">$5</div>
+          <div class="item-qty"><button onclick="changeQty('del2',-1)">−</button><span id="qty-del2">1</span><button onclick="changeQty('del2',1)">+</button></div>
+        </div>
+      </div>
+      <div class="item-row" id="row-del5">
+        <input type="checkbox" class="item-cb" id="cb-del5" onchange="toggleItem('del5')"/>
+        <div class="item-info">
+          <div class="item-name">Up to 5 miles outside 21208</div>
+          <div class="item-desc"></div>
+        </div>
+        <div style="text-align:right;">
+          <div class="item-price">$9</div>
+          <div class="item-qty"><button onclick="changeQty('del5',-1)">−</button><span id="qty-del5">1</span><button onclick="changeQty('del5',1)">+</button></div>
+        </div>
+      </div>
+      <div class="item-row" id="row-del10">
+        <input type="checkbox" class="item-cb" id="cb-del10" onchange="toggleItem('del10')"/>
+        <div class="item-info">
+          <div class="item-name">5–10 miles outside 21208</div>
+          <div class="item-desc"></div>
+        </div>
+        <div style="text-align:right;">
+          <div class="item-price">$15</div>
+          <div class="item-qty"><button onclick="changeQty('del10',-1)">−</button><span id="qty-del10">1</span><button onclick="changeQty('del10',1)">+</button></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Customer Info -->
+  <div class="cust">
+    <div class="sec-title">Your Information</div>
+    <div class="frow">
+      <div class="fg"><label>First Name *</label><input type="text" id="cn-first" placeholder="First"/></div>
+      <div class="fg"><label>Last Name *</label><input type="text" id="cn-last" placeholder="Last"/></div>
+    </div>
+    <div class="frow">
+      <div class="fg"><label>Email *</label><input type="email" id="ce" placeholder="email@example.com"/></div>
+      <div class="fg"><label>Phone *</label><input type="tel" id="cp" placeholder="(000) 000-0000"/></div>
+    </div>
+    <div class="frow">
+      <div class="fg">
+        <label>Can we text you at this number? *</label>
+        <div style="display:flex;gap:14px;margin-top:6px;">
+          <label style="display:flex;align-items:center;gap:6px;font-size:.88rem;"><input type="radio" name="can-text" value="yes" checked/> Yes</label>
+          <label style="display:flex;align-items:center;gap:6px;font-size:.88rem;"><input type="radio" name="can-text" value="no"/> No</label>
+        </div>
+      </div>
+    </div>
+    <!-- Delivery address (shown only for delivery) -->
+    <div id="delivery-addr" style="display:none;">
+      <div class="frow" style="margin-top:6px;">
+        <div class="fg"><label>Street Address *</label><input type="text" id="ca-street" placeholder="123 Main St"/></div>
+      </div>
+      <div class="frow">
+        <div class="fg"><label>City *</label><input type="text" id="ca-city" placeholder="City"/></div>
+        <div class="fg" style="max-width:120px;"><label>State</label><input type="text" id="ca-state" placeholder="MD" value="MD"/></div>
+        <div class="fg" style="max-width:120px;"><label>Zip *</label><input type="text" id="ca-zip" placeholder="21208"/></div>
+      </div>
+    </div>
+    <div class="frow">
+      <div class="fg"><label>Comments / Special Instructions</label><textarea id="cn2" placeholder="Dietary needs, delivery instructions, special requests…"></textarea></div>
+    </div>
+  </div>
+
+  <!-- Order Summary -->
+  <div class="summ">
+    <div class="sec-title">Order Summary</div>
+    <div id="summ-items" style="font-size:.82rem;color:#555;margin-bottom:8px;min-height:20px;"></div>
+    <div class="summ-row"><span>Subtotal</span><span id="s-sub">$0.00</span></div>
+    <div class="summ-row"><span>Est. Tax (6%)</span><span id="s-tax">$0.00</span></div>
+    <div class="summ-total"><span>Estimated Total</span><span id="s-total">$0.00</span></div>
+    <div class="summ-note">Tax is an estimate. Final invoice provided upon confirmation.</div>
+    <button class="sub-btn" id="sub-btn" onclick="submitOrder()">Submit Order Request</button>
+    <button class="clr-btn" onclick="clearAll()">Clear All Selections</button>
+  </div>
+
+</div><!-- /wrap -->
+</div><!-- /menu-body -->
+
+<!-- Confirmation Modal -->
+<div class="modal-ov" id="modal">
+  <div class="modal">
+    <div class="modal-ic">✅</div>
+    <h2>Order Received!</h2>
+    <p id="modal-msg" style="font-size:.88rem;color:#444;margin-bottom:12px;text-align:center;"></p>
+
+    <div style="background:#F0F8FF;border:1.5px solid #4A7C24;border-radius:8px;padding:12px 14px;margin-bottom:10px;">
+      <div style="font-size:.75rem;font-weight:700;color:#2D5016;text-transform:uppercase;letter-spacing:.05em;margin-bottom:8px;">👤 Customer Details</div>
+      <div id="modal-customer" style="font-size:.84rem;color:#333;line-height:1.8;"></div>
+    </div>
+
+    <div style="background:#F7F4EE;border:1.5px solid #C8960C;border-radius:8px;padding:12px 14px;margin-bottom:10px;">
+      <div style="font-size:.75rem;font-weight:700;color:#C8960C;text-transform:uppercase;letter-spacing:.05em;margin-bottom:8px;">📋 Order Details</div>
+      <div id="modal-order-summary" style="font-size:.83rem;color:#333;line-height:1.9;"></div>
+    </div>
+
+    <div style="background:#E8F5E9;border-radius:8px;padding:12px 14px;margin-bottom:14px;">
+      <div style="display:flex;justify-content:space-between;font-size:.84rem;color:#666;margin-bottom:4px;"><span>Subtotal</span><span id="modal-sub"></span></div>
+      <div style="display:flex;justify-content:space-between;font-size:.84rem;color:#666;margin-bottom:4px;"><span>Est. Tax (6%)</span><span id="modal-tax"></span></div>
+      <div style="display:flex;justify-content:space-between;font-size:1.05rem;font-weight:700;color:#2D5016;border-top:2px solid #C8E6C9;padding-top:8px;margin-top:6px;"><span>Total Due</span><span id="modal-total"></span></div>
+    </div>
+
+    <div id="modal-notes-wrap" style="display:none;background:#FFF8E1;border:1px solid #C8960C;border-radius:8px;padding:10px 14px;margin-bottom:14px;">
+      <div style="font-size:.75rem;font-weight:700;color:#C8960C;text-transform:uppercase;letter-spacing:.05em;margin-bottom:4px;">📝 Comments</div>
+      <div id="modal-notes" style="font-size:.83rem;color:#333;line-height:1.6;"></div>
+    </div>
+
+    <a id="pay-btn" href="#" target="_blank" rel="noopener noreferrer" style="display:block;width:100%;padding:13px;background:#2D5016;color:#fff;border:none;border-radius:8px;font-size:.95rem;font-weight:700;text-align:center;text-decoration:none;margin-bottom:10px;font-family:inherit;box-sizing:border-box;">💳 Proceed to Secure Payment</a>
+    <p style="font-size:.72rem;color:#999;margin-top:8px;text-align:center;">Questions? Call 443-272-5484</p>
+  </div>
+</div>
+
+<!-- Deadline Popup -->
+<div id="deadline-modal" style="display:none;position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.6);z-index:9999;flex-direction:column;align-items:center;justify-content:center;">
+  <div style="background:#fff;border-radius:14px;padding:28px 24px;max-width:340px;width:90%;margin:auto;text-align:center;box-shadow:0 8px 32px rgba(0,0,0,0.25);">
+    <div style="font-size:2rem;margin-bottom:10px;">📞</div>
+    <h2 style="color:#C0392B;font-size:1.1rem;margin-bottom:10px;font-family:inherit;">Order Deadline Passed</h2>
+    <p style="font-size:.88rem;color:#444;line-height:1.6;margin-bottom:18px;">
+      Orders must be placed at least <strong>7 days in advance</strong>.<br><br>
+      Please call us directly to place your order:
+    </p>
+    <a href="tel:4432725484" style="display:block;background:#2D5016;color:#fff;border-radius:8px;padding:12px;font-size:1rem;font-weight:700;text-decoration:none;margin-bottom:12px;font-family:inherit;">📞 443-272-5484</a>
+    <button onclick="document.getElementById('deadline-modal').style.display='none';document.getElementById('cd').value='';" style="background:none;border:1px solid #ccc;border-radius:8px;padding:8px 20px;font-size:.85rem;color:#666;cursor:pointer;font-family:inherit;">Choose a Different Date</button>
+  </div>
+</div>
+
+<script>
+const TAX = 0.06;
+const ITEMS = [
+  {id:'cg-veg',   name:'Collard Greens (Vegetarian) — Half Pan',  price:50,  sec:'sid-half'},
+  {id:'cg-smk',   name:'Collard Greens (Smoked Turkey) — Half Pan',price:65, sec:'sid-half'},
+  {id:'cy-half',  name:'Candied Yams — Half Pan',                  price:45,  sec:'sid-half'},
+  {id:'gb-smk',   name:'Green Beans (Smoked Turkey) — Half Pan',   price:65,  sec:'sid-half'},
+  {id:'gb-veg',   name:'Green Beans (Vegetarian) — Half Pan',      price:65,  sec:'sid-half'},
+  {id:'mac-half', name:'Baked Mac & Cheese — Half Pan',            price:70,  sec:'sid-half'},
+  {id:'cg-smk-f', name:'Collard Greens (Smoked Turkey) — Full Pan',price:85, sec:'sid-full'},
+  {id:'cg-veg-f', name:'Collard Greens (Vegetarian) — Full Pan',   price:85,  sec:'sid-full'},
+  {id:'cy-full',  name:'Candied Yams — Full Pan',                  price:65,  sec:'sid-full'},
+  {id:'gb-smk-f', name:'Green Beans (Smoked Turkey) — Full Pan',   price:70,  sec:'sid-full'},
+  {id:'gb-veg-f', name:'Green Beans (Vegetarian) — Full Pan',      price:70,  sec:'sid-full'},
+  {id:'mac-full', name:'Baked Mac & Cheese — Full Pan',            price:95,  sec:'sid-full'},
+  {id:'spp',      name:'Sweet Potato Pie',                         price:25,  sec:'des'},
+  {id:'bb',       name:'Banana Bread',                             price:20,  sec:'des'},
+  {id:'spc',      name:'Sweet Potato Cake',                        price:35,  sec:'des'},
+  {id:'pc',       name:'Pound Cake',                               price:35,  sec:'des'},
+  {id:'rum',      name:'Trini Rum Punch (1 Gallon)',               price:50,  sec:'drk'},
+  {id:'tea',      name:'Homemade Peach Tea (1 Gallon)',            price:12,  sec:'drk'},
+  {id:'del2',     name:'Delivery — Up to 2 miles',                 price:5,   sec:'del'},
+  {id:'del5',     name:'Delivery — Up to 5 miles',                 price:9,   sec:'del'},
+  {id:'del10',    name:'Delivery — 5–10 miles',                    price:15,  sec:'del'},
+];
+const SECTIONS = {
+  'sid-half': ['cg-veg','cg-smk','cy-half','gb-smk','gb-veg','mac-half'],
+  'sid-full': ['cg-smk-f','cg-veg-f','cy-full','gb-smk-f','gb-veg-f','mac-full'],
+  'des':      ['spp','bb','spc','pc'],
+  'drk':      ['rum','tea'],
+  'del':      ['del2','del5','del10'],
+};
+const order = {};
+
+function toggleSection(sec) {
+  const el = document.getElementById('sec-' + sec);
+  if (el) el.style.display = el.style.display === 'none' ? 'block' : 'block';
+}
+
+function toggleDelivery(val) {
+  const show = val === 'delivery';
+  document.getElementById('delivery-section').style.display = show ? 'block' : 'none';
+  document.getElementById('delivery-addr').style.display    = show ? 'block' : 'none';
+  if (!show) {
+    ['del2','del5','del10'].forEach(id => {
+      order[id] = null;
+      const cb = document.getElementById('cb-' + id);
+      if (cb) cb.checked = false;
+    });
+    updateSummary();
+  }
+}
+
+function toggleItem(id) {
+  const cb   = document.getElementById('cb-' + id);
+  const item = ITEMS.find(i => i.id === id);
+  if (cb.checked) {
+    order[id] = {item, qty: 1};
+  } else {
+    delete order[id];
+  }
+  updateBadge(item.sec);
+  updateSummary();
+}
+
+function changeQty(id, delta) {
+  const item = ITEMS.find(i => i.id === id);
+  const cb   = document.getElementById('cb-' + id);
+  if (!order[id]) { order[id] = {item, qty:1}; cb.checked = true; }
+  order[id].qty = Math.max(1, (order[id].qty || 1) + delta);
+  document.getElementById('qty-' + id).textContent = order[id].qty;
+  updateBadge(item.sec);
+  updateSummary();
+}
+
+function updateBadge(sec) {
+  const ids    = SECTIONS[sec] || [];
+  const count  = ids.filter(id => order[id]).length;
+  const badge  = document.getElementById('badge-' + sec);
+  if (badge) badge.textContent = count + ' selected';
+}
+
+function updateSummary() {
+  const sub   = Object.values(order).filter(Boolean).reduce((s,o) => s + o.item.price * o.qty, 0);
+  const tax   = sub * TAX;
+  const total = sub + tax;
+  document.getElementById('s-sub').textContent   = '$' + sub.toFixed(2);
+  document.getElementById('s-tax').textContent   = '$' + tax.toFixed(2);
+  document.getElementById('s-total').textContent = '$' + total.toFixed(2);
+  const lines = Object.values(order).filter(Boolean).map(o =>
+    '<div style="display:flex;justify-content:space-between;padding:2px 0;">' +
+    '<span>' + o.item.name + (o.qty > 1 ? ' x' + o.qty : '') + '</span>' +
+    '<span>$' + (o.item.price * o.qty).toFixed(2) + '</span></div>'
+  );
+  document.getElementById('summ-items').innerHTML = lines.join('') || '<em style="color:#aaa;">No items selected yet</em>';
+}
+
+function clearAll() {
+  Object.keys(order).forEach(k => delete order[k]);
+  ITEMS.forEach(item => {
+    const cb = document.getElementById('cb-' + item.id);
+    if (cb) cb.checked = false;
+    const qty = document.getElementById('qty-' + item.id);
+    if (qty) qty.textContent = '1';
+  });
+  Object.keys(SECTIONS).forEach(sec => updateBadge(sec));
+  updateSummary();
+}
+
+function checkEventDate() {
+  const dateVal  = document.getElementById('cd').value;
+  const menuBody = document.getElementById('menu-body');
+  const gateMsg  = document.getElementById('date-gate-msg');
+  if (!dateVal) { menuBody.style.display = 'none'; return; }
+  const eventDate = new Date(dateVal + 'T12:00');
+  const today     = new Date();
+  today.setHours(0,0,0,0);
+  const diffDays  = Math.floor((eventDate - today) / (1000*60*60*24));
+  if (diffDays < 7) {
+    var dm = document.getElementById('deadline-modal');
+    dm.style.display = 'flex';
+    dm.style.alignItems = 'center';
+    dm.style.justifyContent = 'center';
+    menuBody.style.display = 'none';
+    setTimeout(() => { document.getElementById('cd').value = ''; }, 100);
+  } else {
+    menuBody.style.display = 'block';
+    gateMsg.style.display  = 'none';
+  }
+}
+
+async function submitOrder() {
+  const dateVal = document.getElementById('cd').value;
+  if (!dateVal) { alert('Please select your order date before submitting.'); return; }
+  const eventDate = new Date(dateVal + 'T12:00');
+  const today     = new Date();
+  today.setHours(0,0,0,0);
+  const diffDays  = Math.floor((eventDate - today) / (1000*60*60*24));
+  if (diffDays < 7) {
+    var dm = document.getElementById('deadline-modal');
+    dm.style.display = 'flex'; dm.style.alignItems = 'center'; dm.style.justifyContent = 'center';
+    return;
+  }
+
+  const firstName  = document.getElementById('cn-first').value.trim();
+  const lastName   = document.getElementById('cn-last').value.trim();
+  const email      = document.getElementById('ce').value.trim();
+  const phone      = document.getElementById('cp').value.trim();
+  const notes      = document.getElementById('cn2').value.trim();
+  const canText    = document.querySelector('input[name="can-text"]:checked')?.value || 'yes';
+  const fulfillment= document.querySelector('input[name="fulfillment"]:checked')?.value || 'pickup';
+  const dateStr    = new Date(dateVal + 'T12:00').toLocaleDateString('en-US',{weekday:'long',year:'numeric',month:'long',day:'numeric'});
+
+  if (!firstName || !lastName || !phone) {
+    alert('Please enter your first name, last name, and phone number before submitting.');
+    return;
+  }
+
+  const hasItems = Object.values(order).some(Boolean);
+  if (!hasItems) { alert('Please select at least one item before submitting.'); return; }
+
+  const btn = document.getElementById('sub-btn');
+  btn.disabled = true; btn.textContent = 'Submitting…';
+
+  const sub   = Object.values(order).filter(Boolean).reduce((s,o) => s + o.item.price * o.qty, 0);
+  const tax   = sub * TAX;
+  const total = sub + tax;
+
+  const summaryLines = Object.values(order).filter(Boolean).map(o =>
+    '<div style="display:flex;justify-content:space-between;padding:3px 0;border-bottom:1px solid #eee;">' +
+    '<span>' + o.item.name + (o.qty > 1 ? ' x' + o.qty : '') + '</span>' +
+    '<span style="font-weight:600;">$' + (o.item.price * o.qty).toFixed(2) + '</span></div>'
+  );
+
+  // Populate modal
+  document.getElementById('modal-customer').innerHTML =
+    '<strong>Name:</strong> ' + firstName + ' ' + lastName + '<br>' +
+    '<strong>Phone:</strong> ' + phone + (canText === 'yes' ? ' (OK to text)' : '') + '<br>' +
+    (email ? '<strong>Email:</strong> ' + email + '<br>' : '') +
+    '<strong>Date:</strong> ' + dateStr + '<br>' +
+    '<strong>Fulfillment:</strong> ' + (fulfillment === 'delivery' ? 'Delivery' : 'Pickup');
+
+  document.getElementById('modal-msg').innerHTML =
+    'We will confirm within 24 hours. Proceed to payment to secure your order.';
+
+  document.getElementById('modal-order-summary').innerHTML = summaryLines.join('') || '<em>No items</em>';
+  document.getElementById('modal-sub').textContent   = '$' + sub.toFixed(2);
+  document.getElementById('modal-tax').textContent   = '$' + tax.toFixed(2);
+  document.getElementById('modal-total').textContent = '$' + total.toFixed(2);
+
+  const notesWrap = document.getElementById('modal-notes-wrap');
+  const notesDiv  = document.getElementById('modal-notes');
+  if (notes && notesWrap && notesDiv) {
+    notesDiv.textContent = notes;
+    notesWrap.style.display = 'block';
+  } else if (notesWrap) {
+    notesWrap.style.display = 'none';
+  }
+
+  // Payment URL
+  const fullName = firstName + ' ' + lastName;
+  const payUrl = 'https://pci.jotform.com/form/252856161290054'
+    + '?name=' + encodeURIComponent(fullName)
+    + '&phoneNumber=' + encodeURIComponent(phone)
+    + '&email=' + encodeURIComponent(email)
+    + '&myProducts=' + encodeURIComponent(total.toFixed(2));
+  document.getElementById('pay-btn').href = payUrl;
+
+  document.getElementById('modal').className = 'modal-ov open';
+  btn.disabled = false; btn.textContent = 'Submit Order Request';
+}
+
+addEventListener('DOMContentLoaded', () => {
+  updateSummary();
+  // Set minimum selectable date to 7 days from today
+  const minDate = new Date();
+  minDate.setDate(minDate.getDate() + 7);
+  const yyyy = minDate.getFullYear();
+  const mm   = String(minDate.getMonth()+1).padStart(2,'0');
+  const dd   = String(minDate.getDate()).padStart(2,'0');
+  document.getElementById('cd').min = yyyy+'-'+mm+'-'+dd;
+});
+</script>
+</body></html>

@@ -1,0 +1,386 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<title>Holiday Sides — Menu Admin</title>
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+:root{
+  --dg:#2D5016;--mg:#4A7C24;--gold:#C8960C;--cream:#F7F4EE;
+  --red:#C0392B;--red-bg:#FFEBEE;--green-bg:#E8F5E9;
+  --gray:#666;--lgray:#E8E8E8;--white:#fff;--ch:#2C2C2C;
+}
+body{font-family:'Segoe UI',Arial,sans-serif;background:var(--cream);min-height:100vh;}
+
+/* Login */
+.login{display:flex;align-items:center;justify-content:center;min-height:100vh;padding:20px;}
+.login-card{background:var(--white);border-radius:12px;box-shadow:0 4px 24px rgba(0,0,0,.12);padding:36px 32px;max-width:380px;width:100%;text-align:center;}
+.login-card h1{font-family:Georgia,serif;color:var(--dg);font-size:1.4rem;margin-bottom:6px;}
+.login-card p{color:var(--gray);font-size:.85rem;margin-bottom:24px;}
+.login-card input{width:100%;border:1.5px solid var(--lgray);border-radius:8px;padding:11px 14px;font-size:1rem;font-family:inherit;margin-bottom:14px;}
+.login-card input:focus{outline:none;border-color:var(--mg);}
+.login-btn{width:100%;padding:12px;background:var(--dg);color:var(--white);border:none;border-radius:8px;font-size:1rem;font-weight:700;cursor:pointer;font-family:inherit;}
+.login-btn:hover{background:var(--mg);}
+.login-error{color:var(--red);font-size:.83rem;margin-top:8px;display:none;}
+
+/* Admin panel */
+.admin{display:none;max-width:860px;margin:0 auto;padding:20px 16px 60px;}
+.admin-hdr{background:var(--dg);border-radius:10px;padding:18px 22px;margin-bottom:20px;display:flex;align-items:center;justify-content:space-between;}
+.admin-hdr h1{font-family:Georgia,serif;color:var(--white);font-size:1.3rem;}
+.admin-hdr .logout{background:rgba(255,255,255,.15);color:var(--white);border:1px solid rgba(255,255,255,.3);border-radius:6px;padding:6px 14px;font-size:.8rem;cursor:pointer;font-family:inherit;}
+.admin-hdr .logout:hover{background:rgba(255,255,255,.25);}
+
+.save-bar{background:var(--gold);border-radius:8px;padding:12px 18px;margin-bottom:16px;display:flex;align-items:center;justify-content:space-between;}
+.save-bar span{color:var(--white);font-size:.88rem;font-weight:600;}
+.save-btn{background:var(--white);color:var(--gold);border:none;border-radius:6px;padding:8px 20px;font-size:.88rem;font-weight:700;cursor:pointer;font-family:inherit;}
+.save-btn:hover{background:#FFF8E1;}
+
+.sec-card{background:var(--white);border-radius:10px;box-shadow:0 2px 8px rgba(0,0,0,.08);margin-bottom:16px;overflow:hidden;}
+.sec-hdr{background:var(--dg);padding:10px 16px;font-weight:700;font-size:.9rem;color:var(--white);display:flex;align-items:center;justify-content:space-between;}
+.sec-hdr .toggle-all{font-size:.75rem;font-weight:600;background:rgba(255,255,255,.2);border:none;color:var(--white);border-radius:4px;padding:3px 10px;cursor:pointer;font-family:inherit;}
+
+.admin-item{display:flex;align-items:center;justify-content:space-between;padding:11px 16px;border-bottom:1px solid var(--lgray);transition:background .12s;}
+.admin-item:last-child{border-bottom:none;}
+.admin-item.unavail{background:var(--red-bg);}
+.admin-item.avail{background:var(--white);}
+.item-info .iname{font-weight:600;font-size:.88rem;color:var(--ch);}
+.item-info .iprice{font-size:.78rem;color:var(--gray);margin-top:2px;}
+.item-controls{display:flex;align-items:center;gap:10px;}
+.status-badge{font-size:.72rem;font-weight:700;padding:3px 10px;border-radius:10px;}
+.status-badge.avail{background:var(--green-bg);color:var(--mg);}
+.status-badge.unavail{background:var(--red-bg);color:var(--red);}
+
+.toggle-wrap{display:flex;align-items:center;gap:8px;}
+.toggle-label{font-size:.78rem;color:var(--gray);}
+.toggle{position:relative;width:44px;height:24px;}
+.toggle input{opacity:0;width:0;height:0;}
+.toggle-slider{position:absolute;inset:0;background:#ccc;border-radius:24px;cursor:pointer;transition:.2s;}
+.toggle-slider:before{content:'';position:absolute;height:18px;width:18px;left:3px;bottom:3px;background:var(--white);border-radius:50%;transition:.2s;}
+input:checked + .toggle-slider{background:var(--mg);}
+input:checked + .toggle-slider:before{transform:translateX(20px);}
+
+.stats{display:flex;gap:12px;margin-bottom:16px;flex-wrap:wrap;}
+.stat{background:var(--white);border-radius:8px;padding:12px 16px;flex:1;min-width:120px;text-align:center;box-shadow:0 2px 6px rgba(0,0,0,.07);}
+.stat .num{font-size:1.6rem;font-weight:700;color:var(--dg);}
+.stat .lbl{font-size:.75rem;color:var(--gray);margin-top:2px;}
+
+.toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%);background:var(--dg);color:var(--white);padding:10px 24px;border-radius:8px;font-size:.88rem;font-weight:600;opacity:0;transition:opacity .3s;pointer-events:none;z-index:999;}
+.toast.show{opacity:1;}
+
+/* Payment Link Generator */
+.plg-card{background:#fff;border-radius:10px;box-shadow:0 2px 8px rgba(0,0,0,.08);margin-bottom:16px;overflow:hidden;}
+.plg-hdr{background:#8B6914;padding:12px 18px;font-weight:700;font-size:.95rem;color:#fff;display:flex;align-items:center;gap:8px;}
+.plg-body{padding:18px;}
+.plg-row{display:flex;gap:12px;flex-wrap:wrap;margin-bottom:12px;}
+.plg-fg{display:flex;flex-direction:column;flex:1;min-width:140px;}
+.plg-fg label{font-size:.72rem;font-weight:700;color:var(--gray);margin-bottom:4px;text-transform:uppercase;letter-spacing:.05em;}
+.plg-fg input,.plg-fg select,.plg-fg textarea{border:1.5px solid var(--lgray);border-radius:6px;padding:8px 10px;font-size:.9rem;color:var(--ch);background:var(--cream);font-family:inherit;transition:border-color .2s;}
+.plg-fg input:focus,.plg-fg select:focus,.plg-fg textarea:focus{outline:none;border-color:var(--mg);background:#fff;}
+.plg-fg textarea{resize:vertical;min-height:100px;font-family:monospace;font-size:.8rem;}
+.plg-gen-btn{width:100%;padding:11px;background:var(--dg);color:#fff;border:none;border-radius:8px;font-size:.92rem;font-weight:700;font-family:inherit;cursor:pointer;margin-bottom:14px;transition:background .2s;}
+.plg-gen-btn:hover{background:var(--mg);}
+.plg-result{display:none;}
+.plg-result.show{display:block;}
+.plg-link-box{background:#F0FBF4;border:1.5px solid var(--mg);border-radius:8px;padding:12px 14px;margin-bottom:10px;}
+.plg-link-label{font-size:.75rem;font-weight:700;color:var(--dg);margin-bottom:6px;}
+.plg-link-url{font-size:.71rem;color:var(--gray);word-break:break-all;background:#fff;border:1px solid var(--lgray);border-radius:5px;padding:7px 9px;margin-bottom:8px;font-family:monospace;line-height:1.4;}
+.plg-actions{display:flex;gap:8px;flex-wrap:wrap;}
+.plg-btn-copy{flex:1;padding:10px 12px;background:var(--dg);color:#fff;border:none;border-radius:7px;font-size:.83rem;font-weight:700;cursor:pointer;font-family:inherit;transition:background .15s;}
+.plg-btn-copy:hover{background:var(--mg);}
+.plg-btn-email{flex:1;padding:10px 12px;background:var(--gold);color:#fff;border:none;border-radius:7px;font-size:.83rem;font-weight:700;cursor:pointer;font-family:inherit;transition:background .15s;}
+.plg-btn-email:hover{background:#a87800;}
+.plg-summary-preview{background:var(--cream);border:1px solid var(--lgray);border-radius:6px;padding:10px 12px;font-size:.78rem;color:var(--ch);line-height:1.6;white-space:pre-wrap;margin-bottom:10px;font-family:monospace;}
+@media(max-width:480px){.plg-actions{flex-direction:column;}.plg-row{flex-direction:column;}}
+</style>
+</head>
+<body>
+
+<!-- Login Screen -->
+<div class="login" id="login-screen">
+  <div class="login-card">
+    <h1>Holiday Sides Admin</h1>
+    <p>Menu availability manager<br>Enter your password to continue</p>
+    <input type="password" id="pw-input" placeholder="Enter password"
+      onkeydown="if(event.key==='Enter') doLogin()"/>
+    <button class="login-btn" onclick="doLogin()">Sign In</button>
+    <div class="login-error" id="login-error">Incorrect password. Please try again.</div>
+  </div>
+</div>
+
+<!-- Admin Panel -->
+<div class="admin" id="admin-panel">
+  <div class="admin-hdr">
+    <h1>⚙️ Holiday Sides — Menu Manager</h1>
+    <button class="logout" onclick="doLogout()">Sign Out</button>
+  </div>
+
+  <div class="save-bar">
+    <span>💾 Changes save automatically and update the live order form instantly.</span>
+    <button class="save-btn" onclick="saveAndNotify()">Save Changes</button>
+  </div>
+
+  <div class="stats">
+    <div class="stat"><div class="num" id="stat-total">0</div><div class="lbl">Total Items</div></div>
+    <div class="stat"><div class="num" id="stat-avail" style="color:var(--mg)">0</div><div class="lbl">Available</div></div>
+    <div class="stat"><div class="num" id="stat-unavail" style="color:var(--red)">0</div><div class="lbl">Unavailable</div></div>
+  </div>
+
+  <!-- Payment Link Generator -->
+  <div class="plg-card">
+    <div class="plg-hdr">🔗 Payment Link Generator</div>
+    <div class="plg-body">
+      <p style="font-size:.83rem;color:var(--gray);margin-bottom:14px;line-height:1.5;">
+        Enter the customer's details and order items to generate a pre-filled payment link.
+      </p>
+      <div class="plg-row">
+        <div class="plg-fg"><label>First Name *</label><input type="text" id="plg-fname" placeholder="First name"/></div>
+        <div class="plg-fg"><label>Last Name *</label><input type="text" id="plg-lname" placeholder="Last name"/></div>
+      </div>
+      <div class="plg-row">
+        <div class="plg-fg"><label>Phone *</label><input type="tel" id="plg-phone" placeholder="(000) 000-0000"/></div>
+        <div class="plg-fg"><label>Email *</label><input type="email" id="plg-email" placeholder="customer@email.com"/></div>
+      </div>
+      <div class="plg-row">
+        <div class="plg-fg"><label>Order Total ($) *</label><input type="number" id="plg-total" placeholder="e.g. 150.00" step="0.01" min="0"/></div>
+        <div class="plg-fg"><label>Tax Status</label>
+          <select id="plg-tax">
+            <option value="taxable">Taxable (6%)</option>
+            <option value="exempt">Tax Exempt</option>
+          </select>
+        </div>
+      </div>
+      <div class="plg-row">
+        <div class="plg-fg">
+          <label>Order Details (one item per line)</label>
+          <textarea id="plg-details" placeholder="e.g.&#10;Collard Greens Half Pan x1 - $65.00&#10;Baked Mac & Cheese Full Pan x1 - $95.00&#10;Sweet Potato Pie x2 - $50.00"></textarea>
+        </div>
+      </div>
+      <button class="plg-gen-btn" onclick="generatePayLink()">🔗 Generate Payment Link</button>
+      <div class="plg-result" id="plg-result">
+        <div style="font-weight:700;font-size:.85rem;color:var(--dg);margin-bottom:8px;">✅ Payment link generated:</div>
+        <div class="plg-summary-preview" id="plg-preview"></div>
+        <div class="plg-link-box">
+          <div class="plg-link-label">Pre-filled Payment Link:</div>
+          <div class="plg-link-url" id="plg-link-display"></div>
+          <div class="plg-actions">
+            <button class="plg-btn-copy" id="plg-btn-copy" onclick="plgCopy()">📋 Copy Payment Link</button>
+            <button class="plg-btn-email" onclick="plgEmail()">📧 Email to Customer</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div id="sections-container"></div>
+</div>
+
+<div class="toast" id="toast">Changes saved!</div>
+
+<script>
+const ADMIN_PASSWORD = 'DoughBoy2026!';
+const ITEMS = [
+  {id:'cg-veg',   name:'Collard Greens (Vegetarian) — Half Pan',   price:50,  desc:'Slow-cooked collard greens, no meat.'},
+  {id:'cg-smk',   name:'Collard Greens (Smoked Turkey) — Half Pan', price:65,  desc:'Slow-cooked collard greens with smoked turkey.'},
+  {id:'cy-half',  name:'Candied Yams — Half Pan',                   price:45,  desc:'Sweet, buttery candied yams.'},
+  {id:'gb-smk',   name:'Green Beans (Smoked Turkey) — Half Pan',    price:65,  desc:'Seasoned green beans with smoked turkey.'},
+  {id:'gb-veg',   name:'Green Beans (Vegetarian) — Half Pan',       price:65,  desc:'Seasoned green beans, no meat.'},
+  {id:'mac-half', name:'Baked Mac & Cheese — Half Pan',             price:70,  desc:'Creamy baked mac & cheese.'},
+  {id:'cg-smk-f', name:'Collard Greens (Smoked Turkey) — Full Pan', price:85,  desc:'Slow-cooked collard greens with smoked turkey.'},
+  {id:'cg-veg-f', name:'Collard Greens (Vegetarian) — Full Pan',    price:85,  desc:'Slow-cooked collard greens, no meat.'},
+  {id:'cy-full',  name:'Candied Yams — Full Pan',                   price:65,  desc:'Sweet, buttery candied yams.'},
+  {id:'gb-smk-f', name:'Green Beans (Smoked Turkey) — Full Pan',    price:70,  desc:'Seasoned green beans with smoked turkey.'},
+  {id:'gb-veg-f', name:'Green Beans (Vegetarian) — Full Pan',       price:70,  desc:'Seasoned green beans, no meat.'},
+  {id:'mac-full', name:'Baked Mac & Cheese — Full Pan',             price:95,  desc:'Creamy baked mac & cheese.'},
+  {id:'spp',      name:'Sweet Potato Pie',                          price:25,  desc:'Classic homemade sweet potato pie.'},
+  {id:'bb',       name:'Banana Bread',                              price:20,  desc:'Moist homemade banana bread.'},
+  {id:'spc',      name:'Sweet Potato Cake',                         price:35,  desc:'Homemade sweet potato cake.'},
+  {id:'pc',       name:'Pound Cake',                                price:35,  desc:'Classic homemade pound cake.'},
+  {id:'rum',      name:'Trini Rum Punch (1 Gallon)',                price:50,  desc:'Authentic Trinidad-style rum punch.'},
+  {id:'tea',      name:'Homemade Peach Tea (1 Gallon)',             price:12,  desc:'Freshly brewed homemade peach tea.'},
+  {id:'del2',     name:'Delivery — Up to 2 miles',                  price:5,   desc:'Delivery within 2 miles of 21208.'},
+  {id:'del5',     name:'Delivery — Up to 5 miles',                  price:9,   desc:'Delivery within 5 miles of 21208.'},
+  {id:'del10',    name:'Delivery — 5–10 miles',                     price:15,  desc:'Delivery 5–10 miles from 21208.'},
+];
+const SECTIONS = {
+  'sid-half': ['cg-veg','cg-smk','cy-half','gb-smk','gb-veg','mac-half'],
+  'sid-full': ['cg-smk-f','cg-veg-f','cy-full','gb-smk-f','gb-veg-f','mac-full'],
+  'des':      ['spp','bb','spc','pc'],
+  'drk':      ['rum','tea'],
+  'del':      ['del2','del5','del10'],
+};
+const SECTION_LABELS = {
+  'sid-half': '🍽 Soul Food Sides — Half Pan (10–15 ppl)',
+  'sid-full': '🍽 Soul Food Sides — Full Pan (20–30 ppl)',
+  'des':      '🍰 Desserts',
+  'drk':      '🥤 Drinks',
+  'del':      '🚗 Delivery Options',
+};
+
+let unavailableItems = [];
+try { unavailableItems = JSON.parse(localStorage.getItem('hs_unavailable') || '[]'); } catch(e){}
+
+// ── Auth ──────────────────────────────────────────────────────────────────
+function doLogin() {
+  const pw = document.getElementById('pw-input').value;
+  if (pw === ADMIN_PASSWORD) {
+    document.getElementById('login-screen').style.display = 'none';
+    document.getElementById('admin-panel').style.display  = 'block';
+    renderAdmin();
+  } else {
+    document.getElementById('login-error').style.display = 'block';
+    document.getElementById('pw-input').value = '';
+  }
+}
+function doLogout() {
+  document.getElementById('login-screen').style.display = 'flex';
+  document.getElementById('admin-panel').style.display  = 'none';
+  document.getElementById('pw-input').value = '';
+}
+
+// ── Render ────────────────────────────────────────────────────────────────
+function renderAdmin() {
+  const container = document.getElementById('sections-container');
+  container.innerHTML = '';
+  Object.entries(SECTIONS).forEach(([secKey, itemIds]) => {
+    const label = SECTION_LABELS[secKey] || secKey;
+    const sectionItems = ITEMS.filter(i => itemIds.includes(i.id));
+    if (!sectionItems.length) return;
+    const card = document.createElement('div');
+    card.className = 'sec-card';
+    card.innerHTML = `
+      <div class="sec-hdr">
+        <span>${label}</span>
+        <button class="toggle-all" onclick="toggleSection('${secKey}',this)">Mark All Unavailable</button>
+      </div>`;
+    sectionItems.forEach(item => {
+      const isUnavail = unavailableItems.includes(item.id);
+      const row = document.createElement('div');
+      row.className = 'admin-item ' + (isUnavail ? 'unavail' : 'avail');
+      row.id = 'row-' + item.id;
+      row.innerHTML = `
+        <div class="item-info">
+          <div class="iname">${item.name}</div>
+          <div class="iprice">$${item.price}</div>
+        </div>
+        <div class="item-controls">
+          <span class="status-badge ${isUnavail ? 'unavail' : 'avail'}" id="badge-${item.id}">
+            ${isUnavail ? 'Unavailable' : 'Available'}
+          </span>
+          <label class="toggle">
+            <input type="checkbox" id="tog-${item.id}" ${isUnavail ? '' : 'checked'}
+              onchange="toggleItem('${item.id}', this.checked)"/>
+            <span class="toggle-slider"></span>
+          </label>
+        </div>`;
+      card.appendChild(row);
+    });
+    container.appendChild(card);
+  });
+  updateStats();
+}
+
+function toggleItem(id, isAvail) {
+  if (isAvail) {
+    unavailableItems = unavailableItems.filter(x => x !== id);
+  } else {
+    if (!unavailableItems.includes(id)) unavailableItems.push(id);
+  }
+  const row   = document.getElementById('row-' + id);
+  const badge = document.getElementById('badge-' + id);
+  if (row)   { row.className   = 'admin-item ' + (isAvail ? 'avail' : 'unavail'); }
+  if (badge) { badge.className = 'status-badge ' + (isAvail ? 'avail' : 'unavail');
+               badge.textContent = isAvail ? 'Available' : 'Unavailable'; }
+  saveChanges();
+  updateStats();
+}
+
+function toggleSection(secKey, btn) {
+  const ids = SECTIONS[secKey];
+  const allUnavail = ids.every(id => unavailableItems.includes(id));
+  ids.forEach(id => {
+    const tog = document.getElementById('tog-' + id);
+    if (tog) { tog.checked = allUnavail; toggleItem(id, allUnavail); }
+  });
+  btn.textContent = allUnavail ? 'Mark All Unavailable' : 'Mark All Available';
+}
+
+function updateStats() {
+  const total   = ITEMS.length;
+  const unavail = unavailableItems.length;
+  document.getElementById('stat-total').textContent   = total;
+  document.getElementById('stat-avail').textContent   = total - unavail;
+  document.getElementById('stat-unavail').textContent = unavail;
+}
+
+function saveChanges() {
+  try { localStorage.setItem('hs_unavailable', JSON.stringify(unavailableItems)); } catch(e){}
+}
+
+function saveAndNotify() {
+  saveChanges();
+  const t = document.getElementById('toast');
+  t.textContent = '✅ Changes saved!';
+  t.classList.add('show');
+  setTimeout(() => t.classList.remove('show'), 2500);
+}
+
+// ── Payment Link Generator ────────────────────────────────────────────────
+let _plgUrl = '';
+function generatePayLink() {
+  const fname = document.getElementById('plg-fname').value.trim();
+  const lname = document.getElementById('plg-lname').value.trim();
+  const phone = document.getElementById('plg-phone').value.trim();
+  const email = document.getElementById('plg-email').value.trim();
+  const total = parseFloat(document.getElementById('plg-total').value) || 0;
+  const tax   = document.getElementById('plg-tax').value;
+  const details = document.getElementById('plg-details').value.trim();
+  if (!fname || !lname || !phone || !total) {
+    alert('Please fill in First Name, Last Name, Phone, and Order Total.');
+    return;
+  }
+  const fullName = fname + ' ' + lname;
+  _plgUrl = 'https://pci.jotform.com/form/252856161290054'
+    + '?name=' + encodeURIComponent(fullName)
+    + '&phoneNumber=' + encodeURIComponent(phone)
+    + (email ? '&email=' + encodeURIComponent(email) : '')
+    + '&myProducts=' + encodeURIComponent(total.toFixed(2))
+    + (tax === 'exempt' ? '&taxExempt=1' : '');
+  const preview = [
+    'Customer:  ' + fullName,
+    'Phone:     ' + phone,
+    email ? 'Email:     ' + email : '',
+    'Total:     $' + total.toFixed(2),
+    'Tax:       ' + (tax === 'exempt' ? 'Tax Exempt' : 'Taxable (6%)'),
+    details ? '\nOrder:\n' + details : '',
+  ].filter(Boolean).join('\n');
+  document.getElementById('plg-preview').textContent     = preview;
+  document.getElementById('plg-link-display').textContent = _plgUrl;
+  document.getElementById('plg-result').classList.add('show');
+}
+function plgCopy() {
+  navigator.clipboard.writeText(_plgUrl).then(() => {
+    const btn = document.getElementById('plg-btn-copy');
+    btn.textContent = '✅ Copied!';
+    btn.classList.add('copied');
+    setTimeout(() => { btn.textContent = '📋 Copy Payment Link'; btn.classList.remove('copied'); }, 2000);
+  });
+}
+function plgEmail() {
+  const fname = document.getElementById('plg-fname').value.trim();
+  const lname = document.getElementById('plg-lname').value.trim();
+  const email = document.getElementById('plg-email').value.trim();
+  const total = parseFloat(document.getElementById('plg-total').value) || 0;
+  const details = document.getElementById('plg-details').value.trim();
+  const subject = encodeURIComponent('Your Doughboy Food Holiday Sides Payment Link');
+  const body = encodeURIComponent(
+    'Hi ' + fname + ',\n\nThank you for your order! Here is your secure payment link:\n\n'
+    + _plgUrl + '\n\n'
+    + (details ? 'Order Summary:\n' + details + '\n\nTotal: $' + total.toFixed(2) + '\n\n' : '')
+    + 'If you have any questions, call us at 443-272-5484.\n\nThank you!\nDoughboy Food'
+  );
+  window.location.href = 'mailto:' + email + '?subject=' + subject + '&body=' + body;
+}
+</script>
+</body>
+</html>
